@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useFirestoreContext } from '../context/FirestoreContext';
 
 const LogIn = () => {
   const { login, currentUser } = useAuthContext();
@@ -35,11 +36,12 @@ const LogOut = () => {
 
 function Navigation() {
   const { currentUser } = useAuthContext();
+  const { pathname } = useLocation();
   return (
     <ul className='navbar-nav me-auto mb-2 mb-lg-0'>
       <li className='nav-item'>
         <Link
-          className='nav-link active'
+          className={`nav-link ${pathname === '/' ? 'active' : ''}`}
           aria-current='page'
           to={'/'}
         >
@@ -49,11 +51,24 @@ function Navigation() {
       {currentUser && (
         <li className='nav-item'>
           <Link
-            className='nav-link active'
+            className={`nav-link ${
+              pathname === '/stockimages' ? 'active' : ''
+            }`}
             aria-current='page'
             to={'/stockimages'}
           >
             My Stock Images
+          </Link>
+        </li>
+      )}
+      {currentUser && (
+        <li className='nav-item'>
+          <Link
+            className={`nav-link ${pathname === '/profile' ? 'active' : ''}`}
+            aria-current='page'
+            to={'/profile'}
+          >
+            Profile
           </Link>
         </li>
       )}
@@ -62,6 +77,17 @@ function Navigation() {
 }
 
 function SearchForm() {
+  const [text, search] = useState(null);
+  const { filterItems: filter } = useFirestoreContext();
+  const handleOnChange = e => {
+    search(e.target.value);
+    filter(e.target.value);
+  };
+  const handleOnSubmit = e => {
+    e.preventDefault();
+    filter(text);
+  };
+
   return (
     <form className='d-flex'>
       <input
@@ -69,10 +95,13 @@ function SearchForm() {
         type='search'
         placeholder='Search'
         aria-label='Search'
+        onChange={handleOnChange}
+        value={text}
       />
       <button
         className='btn btn-outline-success'
         type='submit'
+        onSubmit={handleOnSubmit}
       >
         Search
       </button>
@@ -119,12 +148,14 @@ function Dropdown() {
           style={{ right: '0', left: 'unset' }}
         >
           <li>
-            <a
-              className='dropdown-item text-center'
-              href='#'
-            >
-              {username}
-            </a>
+            {currentUser && (
+              <Link
+                className='dropdown-item text-center'
+                to={'/profile'}
+              >
+                {username}
+              </Link>
+            )}
           </li>
           <li>
             <hr className='dropdown divideter' />

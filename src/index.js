@@ -9,6 +9,8 @@ import reportWebVitals from './reportWebVitals';
 import Provider from './context/FirestoreContext';
 import AuthProvider, { useAuthContext } from './context/AuthContext';
 import './index.css';
+import NotFound from './components/NotFound';
+import Profile from './components/Profile';
 
 const AppRoutes = () => {
   const { currentUser } = useAuthContext();
@@ -21,6 +23,14 @@ const AppRoutes = () => {
       <Route
         path='/images/:id'
         element={<Single />}
+      />
+      <Route
+        path='/profile'
+        element={<Profile />}
+      />
+      <Route
+        path='*'
+        element={<NotFound />}
       />
       {currentUser && (
         <Route
