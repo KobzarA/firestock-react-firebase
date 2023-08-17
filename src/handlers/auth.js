@@ -39,7 +39,6 @@ const FirebaseAuth = {
     });
   },
   getCurrentUser: () => {
-    console.log('getCurrentUser');
     return new Promise(resolve => {
       return auth.onAuthStateChanged(resolve);
     });

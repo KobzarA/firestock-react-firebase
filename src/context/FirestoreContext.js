@@ -1,4 +1,10 @@
-import { createContext, useContext, useMemo, useReducer } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react';
 import Firestore from '../handlers/firestore';
 
 const { readDocs } = Firestore;
@@ -45,7 +51,7 @@ function reducer(state, action) {
         ...state,
         items: action.payload.items,
         placeholders: action.payload.items,
-        inputs: { title: null, file: null, path: null }, //1213
+        inputs: { title: null, file: null, path: null },
       };
     case 'setInputs':
       return {
@@ -69,19 +75,22 @@ const Provider = ({ children }) => {
     dispatch({ type: 'setItems', payload: { items } });
   };
 
-  const filterItems = input => {
-    if (input === '' || !!input) {
-      dispatch({ type: 'setItems', payload: { items: state.placeholders } });
-    }
-    let list = state.placeholders.flat();
-    let results = list.filter(item => {
-      const name = item.title.toLowerCase();
-      const searchInput = input.toLowerCase();
-      return name.indexOf(searchInput) > -1;
-    });
+  const filterItems = useCallback(
+    input => {
+      if (input === '' || !!input) {
+        dispatch({ type: 'setItems', payload: { items: state.placeholders } });
+      }
+      let list = state.placeholders.flat();
+      let results = list.filter(item => {
+        const name = item.title.toLowerCase();
+        const searchInput = input.toLowerCase();
+        return name.indexOf(searchInput) > -1;
+      });
 
-    dispatch({ type: 'filterItems', payload: results });
-  };
+      dispatch({ type: 'filterItems', payload: { results } });
+    },
+    [state.placeholders]
+  );
 
   const value = useMemo(() => {
     return {
@@ -91,6 +100,7 @@ const Provider = ({ children }) => {
       filterItems,
     };
   }, [state, dispatch, read, filterItems]);
+
   return <Context.Provider value={value}>{children}</Context.Provider>;
 };
 

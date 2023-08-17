@@ -2,7 +2,6 @@ import { useAuthContext } from '../context/AuthContext';
 
 const Profile = () => {
   const { currentUser } = useAuthContext();
-  console.log(currentUser);
   return (
     <>
       <h1 className='text-center'>Profile</h1>

@@ -15,8 +15,6 @@ const Firestore = {
     return new Promise(async resolve => {
       try {
         const snapshots = await getDocs(ref);
-
-        console.log('Firestore readDocs');
         snapshots.forEach(doc => {
           const d = { ...doc.data(), id: doc.id };
           docs.push(d);

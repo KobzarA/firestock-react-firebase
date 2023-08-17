@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 import { useFirestoreContext } from '../context/FirestoreContext';
@@ -21,6 +21,7 @@ const LogIn = () => {
 
 const LogOut = () => {
   const { logout, currentUser } = useAuthContext();
+
   return (
     !!currentUser && (
       <button
@@ -89,19 +90,20 @@ function SearchForm() {
   };
 
   return (
-    <form className='d-flex'>
+    <form
+      className='d-flex'
+      onSubmit={handleOnSubmit}
+    >
       <input
         className='form-control me-2'
         type='search'
         placeholder='Search'
         aria-label='Search'
         onChange={handleOnChange}
-        value={text}
       />
       <button
         className='btn btn-outline-success'
         type='submit'
-        onSubmit={handleOnSubmit}
       >
         Search
       </button>

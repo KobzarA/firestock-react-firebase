@@ -11,7 +11,7 @@ const StockImages = () => {
     if (!state.items || !currentUser) return [];
 
     const filtered = state.items.filter(item => {
-      const username = currentUser?.displayName.split(' ').join(' ');
+      const username = currentUser?.displayName.split(' ').join('');
 
       return item.user === username.toLowerCase();
     });

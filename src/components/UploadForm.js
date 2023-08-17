@@ -1,4 +1,4 @@
-import { useMemo, useContext } from 'react';
+import { useMemo, useContext, useState } from 'react';
 import { Context } from '../context/FirestoreContext';
 import { useAuthContext } from '../context/AuthContext';
 import Firestore from '../handlers/firestore';
@@ -31,14 +31,17 @@ const UploadForm = () => {
   const { dispatch, state, read } = useContext(Context);
   const { isCollapsed: isVisible, inputs } = state; // destructuring the current state
   const { currentUser } = useAuthContext();
+  const [isSending, setIsSending] = useState(false);
 
-  const username = currentUser?.displayName.split('').join('');
+  const username = currentUser?.displayName.split(' ').join('');
 
   const handleOnChange = e =>
     dispatch({ type: 'setInputs', payload: { value: e } });
 
   const handleOnSubmit = e => {
     e.preventDefault();
+    setIsSending(!isSending);
+
     uploadFile(state.inputs)
       .then(downloadFile)
       .then(url => {
@@ -47,6 +50,7 @@ const UploadForm = () => {
           'stocks'
         ).then(() => {
           read();
+          setIsSending(!isSending);
           dispatch({ type: 'collapse', payload: { bool: false } });
         });
       });
@@ -86,7 +90,7 @@ const UploadForm = () => {
             <button
               type='submit'
               className='btn btn-success float-end'
-              disabled={isDisabled}
+              disabled={isDisabled || isSending}
             >
               Save and upload
             </button>
